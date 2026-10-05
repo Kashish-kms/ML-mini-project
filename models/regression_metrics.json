@@ -1,0 +1,38 @@
+{
+  "best_model": "XGBoost",
+  "test_MAE": 53847.0,
+  "test_RMSE": 82066.51,
+  "test_R2": 0.9003,
+  "comparison": [
+    {
+      "model": "LinearRegression",
+      "MAE": 76940.05,
+      "RMSE": 111719.31,
+      "R2": 0.8153
+    },
+    {
+      "model": "Ridge",
+      "MAE": 76785.44,
+      "RMSE": 110373.97,
+      "R2": 0.8197
+    },
+    {
+      "model": "RandomForest",
+      "MAE": 54218.46,
+      "RMSE": 83262.34,
+      "R2": 0.8974
+    },
+    {
+      "model": "XGBoost",
+      "MAE": 54523.67,
+      "RMSE": 82360.44,
+      "R2": 0.8996
+    },
+    {
+      "model": "XGBoost (tuned)",
+      "MAE": 53847.0,
+      "RMSE": 82066.51,
+      "R2": 0.9003
+    }
+  ]
+}

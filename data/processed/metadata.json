@@ -1,0 +1,85 @@
+{
+  "categorical_options": {
+    "brand": [
+      "Ambassador",
+      "Audi",
+      "BMW",
+      "Chevrolet",
+      "Daewoo",
+      "Datsun",
+      "Fiat",
+      "Force",
+      "Ford",
+      "Honda",
+      "Hyundai",
+      "Isuzu",
+      "Kia",
+      "Mahindra",
+      "Maruti",
+      "Mercedes-Benz",
+      "Mitsubishi",
+      "Nissan",
+      "Opel",
+      "Peugeot",
+      "Renault",
+      "Skoda",
+      "Tata",
+      "Toyota",
+      "Volkswagen",
+      "Volvo"
+    ],
+    "fuel": [
+      "CNG",
+      "Diesel",
+      "LPG",
+      "Petrol"
+    ],
+    "seller_type": [
+      "Dealer",
+      "Individual",
+      "Trustmark Dealer"
+    ],
+    "transmission": [
+      "Automatic",
+      "Manual"
+    ],
+    "owner": [
+      "First Owner",
+      "Fourth & Above Owner",
+      "Second Owner",
+      "Third Owner"
+    ]
+  },
+  "numeric_ranges": {
+    "car_age": {
+      "min": 4.0,
+      "max": 41.0,
+      "median": 10.0
+    },
+    "km_driven": {
+      "min": 1.0,
+      "max": 192000.0,
+      "median": 63247.5
+    },
+    "mileage": {
+      "min": 0.0,
+      "max": 33.44,
+      "median": 19.7
+    },
+    "engine": {
+      "min": 624.0,
+      "max": 3498.0,
+      "median": 1248.0
+    },
+    "max_power": {
+      "min": 0.0,
+      "max": 272.0,
+      "median": 81.83
+    },
+    "seats": {
+      "min": 2.0,
+      "max": 14.0,
+      "median": 5.0
+    }
+  }
+}

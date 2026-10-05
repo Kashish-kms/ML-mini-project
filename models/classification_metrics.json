@@ -1,0 +1,72 @@
+{
+  "best_model": "XGBoost",
+  "test_accuracy": 0.7711,
+  "test_precision": 0.7693,
+  "test_recall": 0.7652,
+  "test_f1": 0.7672,
+  "test_roc_auc": 0.9052,
+  "confusion_matrix": [
+    [
+      584,
+      91,
+      69
+    ],
+    [
+      95,
+      320,
+      3
+    ],
+    [
+      75,
+      4,
+      231
+    ]
+  ],
+  "class_names": [
+    "Fair",
+    "Overpriced",
+    "Underpriced"
+  ],
+  "comparison": [
+    {
+      "model": "LogisticRegression",
+      "accuracy": 0.5394,
+      "precision": 0.5504,
+      "recall": 0.5821,
+      "f1": 0.5399,
+      "roc_auc": 0.7766
+    },
+    {
+      "model": "RandomForest",
+      "accuracy": 0.6685,
+      "precision": 0.6676,
+      "recall": 0.6331,
+      "f1": 0.6463,
+      "roc_auc": 0.8422
+    },
+    {
+      "model": "SVM",
+      "accuracy": 0.6875,
+      "precision": 0.6777,
+      "recall": 0.7199,
+      "f1": 0.6887,
+      "roc_auc": 0.8698
+    },
+    {
+      "model": "XGBoost",
+      "accuracy": 0.7364,
+      "precision": 0.7417,
+      "recall": 0.7139,
+      "f1": 0.7257,
+      "roc_auc": 0.8813
+    },
+    {
+      "model": "XGBoost (tuned)",
+      "accuracy": 0.7711,
+      "precision": 0.7693,
+      "recall": 0.7652,
+      "f1": 0.7672,
+      "roc_auc": 0.9052
+    }
+  ]
+}

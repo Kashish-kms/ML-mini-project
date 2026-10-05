@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Used Car Price Estimator and Deal Classifier — Get an AI-powered fair resale price and deal verdict for any used car in India.">
+    <title>Used Car Price Estimator &amp; Deal Classifier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- ─── Navigation ──────────────────────────────────── -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="nav-icon">🚗</span>
+            <span class="nav-title">CarValue<span class="accent">AI</span></span>
+        </div>
+        <div class="nav-tabs">
+            <button class="tab-btn active" data-tab="estimator" id="tab-estimator">Estimator</button>
+            <button class="tab-btn" data-tab="insights" id="tab-insights">Insights</button>
+            <button class="tab-btn" data-tab="about" id="tab-about">About</button>
+        </div>
+    </nav>
+
+    <!-- ─── Hero ────────────────────────────────────────── -->
+    <header id="hero">
+        <div class="hero-content">
+            <h1>Know Your Car's <span class="gradient-text">True Value</span></h1>
+            <p class="hero-subtitle">AI-powered price estimation and deal analysis for the Indian used car market</p>
+        </div>
+        <div class="hero-glow"></div>
+    </header>
+
+    <!-- ─── Estimator Tab ───────────────────────────────── -->
+    <main id="tab-content-estimator" class="tab-content active">
+        <div class="container">
+            <div class="grid-layout">
+                <!-- Form Card -->
+                <div class="card form-card" id="form-card">
+                    <div class="card-header">
+                        <h2>Enter Car Details</h2>
+                        <p>Fill in the specifications to get an instant valuation</p>
+                    </div>
+                    <form id="predict-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="brand">Brand</label>
+                                <select id="brand" name="brand" required>
+                                    <option value="">Select brand</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="year">Year of Purchase</label>
+                                <input type="number" id="year" name="year" min="1990" max="2024" placeholder="e.g. 2018" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="km_driven">Km Driven</label>
+                                <input type="number" id="km_driven" name="km_driven" min="0" placeholder="e.g. 50000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fuel">Fuel Type</label>
+                                <select id="fuel" name="fuel" required>
+                                    <option value="">Select fuel</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="seller_type">Seller Type</label>
+                                <select id="seller_type" name="seller_type" required>
+                                    <option value="">Select seller type</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="transmission">Transmission</label>
+                                <select id="transmission" name="transmission" required>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="owner">Ownership</label>
+                                <select id="owner" name="owner" required>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="engine">Engine (CC)</label>
+                                <input type="number" id="engine" name="engine" min="500" max="6000" step="1" placeholder="e.g. 1197" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="max_power">Max Power (bhp)</label>
+                                <input type="number" id="max_power" name="max_power" min="30" max="600" step="0.1" placeholder="e.g. 82" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mileage">Mileage (kmpl)</label>
+                                <input type="number" id="mileage" name="mileage" min="5" max="50" step="0.1" placeholder="e.g. 21.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="seats">Seats</label>
+                                <select id="seats" name="seats" required>
+                                    <option value="">Select</option>
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="14">14</option>
+                                </select>
+                            </div>
+                            <div class="form-group listed-price-group">
+                                <label for="listed_price">Listed Price ₹ <span class="optional">(optional)</span></label>
+                                <input type="number" id="listed_price" name="listed_price" min="0" placeholder="e.g. 450000">
+                                <span class="hint">Enter to get a deal verdict</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary" id="submit-btn">
+                            <span class="btn-text">Estimate Value</span>
+                            <span class="btn-loader hidden" id="btn-loader">
+                                <span class="spinner"></span> Analyzing…
+                            </span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results Card -->
+                <div class="card result-card hidden" id="result-card">
+                    <div class="card-header">
+                        <h2>Valuation Report</h2>
+                    </div>
+
+                    <!-- Price Display -->
+                    <div class="price-display" id="price-display">
+                        <div class="price-label">Estimated Fair Value</div>
+                        <div class="price-amount" id="result-price">—</div>
+                        <div class="price-range" id="result-range"></div>
+                    </div>
+
+                    <!-- Deal Badge -->
+                    <div class="deal-badge-container" id="deal-container">
+                        <div class="deal-badge" id="deal-badge">
+                            <span class="deal-icon" id="deal-icon"></span>
+                            <span class="deal-text" id="deal-text"></span>
+                        </div>
+                        <div class="deal-confidence" id="deal-confidence"></div>
+                    </div>
+
+                    <!-- Top Factors Chart -->
+                    <div class="factors-section" id="factors-section">
+                        <h3>Key Price Factors</h3>
+                        <canvas id="factors-chart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div class="error-toast hidden" id="error-toast">
+                <span class="error-icon">⚠️</span>
+                <span class="error-msg" id="error-msg"></span>
+                <button class="error-close" id="error-close">&times;</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ─── Insights Tab ────────────────────────────────── -->
+    <main id="tab-content-insights" class="tab-content">
+        <div class="container">
+            <h2 class="section-title">Model Performance & Data Insights</h2>
+
+            <!-- Regression Metrics -->
+            <div class="card insights-card">
+                <h3>📈 Regression Model Comparison</h3>
+                <div class="table-wrap">
+                    <table id="reg-table">
+                        <thead>
+                            <tr><th>Model</th><th>MAE (₹)</th><th>RMSE (₹)</th><th>R²</th></tr>
+                        </thead>
+                        <tbody id="reg-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Classification Metrics -->
+            <div class="card insights-card">
+                <h3>🏷️ Classification Model Comparison</h3>
+                <div class="table-wrap">
+                    <table id="clf-table">
+                        <thead>
+                            <tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr>
+                        </thead>
+                        <tbody id="clf-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Confusion Matrix -->
+            <div class="card insights-card">
+                <h3>🔢 Confusion Matrix</h3>
+                <div class="chart-container">
+                    <img id="confusion-img" src="/static/img/confusion_matrix.png" alt="Confusion Matrix" class="chart-img" loading="lazy">
+                </div>
+            </div>
+
+            <!-- EDA Charts -->
+            <div class="card insights-card">
+                <h3>📊 Exploratory Data Analysis</h3>
+                <div class="eda-gallery">
+                    <div class="eda-item">
+                        <img src="/static/img/eda_price_distribution.png" alt="Price Distribution" loading="lazy">
+                    </div>
+                    <div class="eda-item">
+                        <img src="/static/img/eda_price_vs_age.png" alt="Price vs Car Age" loading="lazy">
+                    </div>
+                    <div class="eda-item">
+                        <img src="/static/img/eda_price_vs_km.png" alt="Price vs Km Driven" loading="lazy">
+                    </div>
+                    <div class="eda-item">
+                        <img src="/static/img/eda_avg_price_by_category.png" alt="Avg Price by Category" loading="lazy">
+                    </div>
+                    <div class="eda-item">
+                        <img src="/static/img/eda_correlation_heatmap.png" alt="Correlation Heatmap" loading="lazy">
+                    </div>
+                    <div class="eda-item">
+                        <img src="/static/img/shap_importance.png" alt="SHAP Feature Importance" loading="lazy">
+                    </div>
+                    <div class="eda-item">
+                        <img src="/static/img/regression_plots.png" alt="Regression Plots" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ─── About Tab ───────────────────────────────────── -->
+    <main id="tab-content-about" class="tab-content">
+        <div class="container">
+            <div class="card about-card">
+                <h2>About CarValueAI</h2>
+
+                <div class="about-section">
+                    <h3>📋 Dataset</h3>
+                    <p>This model is trained on the <strong>CarDekho "Car details v3"</strong> dataset from Kaggle, containing ~8,000 used-car listings from the Indian market with details like brand, year, mileage, engine specs, and selling price.</p>
+                </div>
+
+                <div class="about-section">
+                    <h3>🔬 Method</h3>
+                    <ul>
+                        <li><strong>Regression:</strong> We compare Linear Regression, Ridge, Random Forest, and XGBoost. The best model (tuned via RandomizedSearchCV with 5-fold CV) predicts the log-transformed selling price, which is then converted back to INR.</li>
+                        <li><strong>Classification:</strong> Out-of-fold regression predictions create deal labels (Underpriced / Fair / Overpriced based on actual/predicted ratio). A classifier trained on car features + listed price predicts the deal category.</li>
+                        <li><strong>Explainability:</strong> SHAP (SHapley Additive exPlanations) values reveal which features most influence each prediction.</li>
+                    </ul>
+                </div>
+
+                <div class="about-section">
+                    <h3>⚠️ Limitations</h3>
+                    <ul>
+                        <li>The model is trained on CarDekho data only — real market prices vary by location, condition, and negotiation.</li>
+                        <li>Exotic or rare car models may not have enough training examples for reliable estimates.</li>
+                        <li>The dataset has a fixed time horizon; used-car prices fluctuate with economic conditions.</li>
+                        <li>Features like service history, accident record, and modifications are not captured in this dataset.</li>
+                    </ul>
+                </div>
+
+                <div class="about-section">
+                    <h3>💻 Tech Stack</h3>
+                    <div class="tech-badges">
+                        <span class="badge">Python</span>
+                        <span class="badge">scikit-learn</span>
+                        <span class="badge">XGBoost</span>
+                        <span class="badge">SHAP</span>
+                        <span class="badge">Flask</span>
+                        <span class="badge">Chart.js</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
