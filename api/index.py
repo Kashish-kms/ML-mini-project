@@ -8,46 +8,24 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 try:
     from app.app import app
 
-    class VercelPathMiddleware:
+    _orig_wsgi = app.wsgi_app
+
+    class VercelPathFix:
+        """Strip /api/index prefix that Vercel prepends to PATH_INFO."""
+
         def __init__(self, wsgi_app):
             self.wsgi_app = wsgi_app
 
         def __call__(self, environ, start_response):
-            query_string = environ.get("QUERY_STRING", "")
-            if "__path__=" in query_string:
-                from urllib.parse import parse_qsl, urlencode
-                params = parse_qsl(query_string, keep_blank_values=True)
-                path_val = None
-                remaining = []
-                for k, v in params:
-                    if k == "__path__":
-                        path_val = v
-                    else:
-                        remaining.append((k, v))
-                if path_val is not None:
-                    path_val = path_val.lstrip("/")
-                    environ["PATH_INFO"] = "/" + path_val
-                    environ["QUERY_STRING"] = urlencode(remaining)
-            else:
-                matched_path = environ.get("HTTP_X_MATCHED_PATH")
-                if matched_path and not matched_path.startswith("/api/index"):
-                    environ["PATH_INFO"] = matched_path
-                else:
-                    path = environ.get("PATH_INFO", "")
-                    for prefix in ("/api/index.py", "/api/index", "/api"):
-                        if path.startswith(prefix):
-                            new_path = path[len(prefix):]
-                            environ["PATH_INFO"] = new_path if new_path.startswith("/") else ("/" + new_path if new_path else "/")
-                            break
-            def debug_start_response(status, headers, exc_info=None):
-                headers.append(("X-Debug-Path", str(environ.get("PATH_INFO"))))
-                headers.append(("X-Debug-QS", str(environ.get("QUERY_STRING"))))
-                headers.append(("X-Debug-Matched", str(environ.get("HTTP_X_MATCHED_PATH"))))
-                return start_response(status, headers, exc_info)
+            path = environ.get("PATH_INFO", "/")
+            for prefix in ("/api/index.py", "/api/index"):
+                if path == prefix or path.startswith(prefix + "/"):
+                    environ["PATH_INFO"] = path[len(prefix):] or "/"
+                    break
+            return self.wsgi_app(environ, start_response)
 
-            return self.wsgi_app(environ, debug_start_response)
+    app.wsgi_app = VercelPathFix(_orig_wsgi)
 
-    app.wsgi_app = VercelPathMiddleware(app.wsgi_app)
 except Exception:
     err = traceback.format_exc()
     from flask import Flask

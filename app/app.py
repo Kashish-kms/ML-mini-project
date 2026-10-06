@@ -147,15 +147,11 @@ def _get_shap_factors(X_transformed, top_n=5):
 
 # ── Routes ─────────────────────────────────────────────────────────────────
 @app.route("/")
-@app.route("/api/index")
-@app.route("/api/index.py")
 def index():
     return render_template("index.html")
 
 
 @app.route("/predict", methods=["POST"])
-@app.route("/api/index/predict", methods=["POST"])
-@app.route("/api/index.py/predict", methods=["POST"])
 def predict():
     if not MODELS_LOADED:
         return jsonify({"error": "Models not loaded. Please train first."}), 503
@@ -248,8 +244,6 @@ def predict():
 
 
 @app.route("/insights")
-@app.route("/api/index/insights")
-@app.route("/api/index.py/insights")
 def insights():
     if not MODELS_LOADED:
         return jsonify({"error": "Models not loaded."}), 503
@@ -269,8 +263,6 @@ def insights():
 
 
 @app.route("/metadata")
-@app.route("/api/index/metadata")
-@app.route("/api/index.py/metadata")
 def get_metadata():
     return jsonify(metadata)
 
