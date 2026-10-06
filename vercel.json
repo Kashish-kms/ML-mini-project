@@ -1,8 +1,8 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index"
-    }
+    { "source": "/metadata", "destination": "/api/index?__endpoint__=metadata" },
+    { "source": "/insights", "destination": "/api/index?__endpoint__=insights" },
+    { "source": "/predict", "destination": "/api/index?__endpoint__=predict" },
+    { "source": "/(.*)", "destination": "/api/index" }
   ]
 }

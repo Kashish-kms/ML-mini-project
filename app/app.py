@@ -146,11 +146,20 @@ def _get_shap_factors(X_transformed, top_n=5):
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────
-@app.route("/")
-@app.route("/api/index")
-@app.route("/api/index.py")
-@app.route("/api")
+@app.route("/", methods=["GET", "POST"])
+@app.route("/api/index", methods=["GET", "POST"])
+@app.route("/api/index.py", methods=["GET", "POST"])
+@app.route("/api", methods=["GET", "POST"])
 def index():
+    if request.method == "POST":
+        return predict()
+    endpoint = request.args.get("__endpoint__")
+    if endpoint == "metadata":
+        return get_metadata()
+    elif endpoint == "insights":
+        return insights()
+    elif endpoint == "predict":
+        return predict()
     return render_template("index.html")
 
 
