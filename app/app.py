@@ -147,11 +147,16 @@ def _get_shap_factors(X_transformed, top_n=5):
 
 # ── Routes ─────────────────────────────────────────────────────────────────
 @app.route("/")
+@app.route("/api/index")
+@app.route("/api/index.py")
+@app.route("/api")
 def index():
     return render_template("index.html")
 
 
 @app.route("/predict", methods=["POST"])
+@app.route("/api/index/predict", methods=["POST"])
+@app.route("/api/index.py/predict", methods=["POST"])
 def predict():
     if not MODELS_LOADED:
         return jsonify({"error": "Models not loaded. Please train first."}), 503
@@ -244,6 +249,8 @@ def predict():
 
 
 @app.route("/insights")
+@app.route("/api/index/insights")
+@app.route("/api/index.py/insights")
 def insights():
     if not MODELS_LOADED:
         return jsonify({"error": "Models not loaded."}), 503
@@ -263,13 +270,28 @@ def insights():
 
 
 @app.route("/metadata")
+@app.route("/api/index/metadata")
+@app.route("/api/index.py/metadata")
 def get_metadata():
     return jsonify(metadata)
 
 
-@app.route("/static/img/<path:filename>")
-def serve_img(filename):
-    return send_from_directory(str(STATIC_DIR / "img"), filename)
+@app.route("/static/<path:filename>")
+@app.route("/api/index/static/<path:filename>")
+@app.route("/api/index.py/static/<path:filename>")
+def serve_static(filename):
+    return send_from_directory(str(STATIC_DIR), filename)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify({
+        "error": "404 Not Found",
+        "path": request.path,
+        "path_info": request.environ.get("PATH_INFO"),
+        "script_name": request.environ.get("SCRIPT_NAME"),
+        "raw_uri": request.environ.get("RAW_URI"),
+    }), 404
 
 
 # ── Main ───────────────────────────────────────────────────────────────────

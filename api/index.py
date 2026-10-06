@@ -12,7 +12,7 @@ try:
     _orig_wsgi = app.wsgi_app
 
     class VercelPathFix:
-        """Strip /api/index prefix that Vercel prepends to PATH_INFO."""
+        """Normalize PATH_INFO and SCRIPT_NAME for Vercel Serverless environment."""
 
         def __init__(self, wsgi_app):
             self.wsgi_app = wsgi_app
@@ -20,8 +20,8 @@ try:
         def __call__(self, environ, start_response):
             path = environ.get("PATH_INFO", "/")
 
-            # If requested path is /debug-wsgi, dump environ for debugging
-            if path.rstrip("/").endswith("/debug-wsgi"):
+            # Debug inspection endpoint
+            if path.rstrip("/").endswith("/debug-wsgi") or environ.get("QUERY_STRING", "").find("__debug__=1") != -1:
                 debug_info = {
                     "PATH_INFO": environ.get("PATH_INFO"),
                     "SCRIPT_NAME": environ.get("SCRIPT_NAME"),
@@ -31,7 +31,6 @@ try:
                     "HTTP_X_MATCHED_PATH": environ.get("HTTP_X_MATCHED_PATH"),
                     "HTTP_X_FORWARDED_HOST": environ.get("HTTP_X_FORWARDED_HOST"),
                     "HTTP_HOST": environ.get("HTTP_HOST"),
-                    "SERVER_NAME": environ.get("SERVER_NAME"),
                 }
                 body = json.dumps(debug_info, indent=2).encode("utf-8")
                 start_response("200 OK", [
@@ -40,12 +39,19 @@ try:
                 ])
                 return [body]
 
-            # Strip /api/index prefix if present
-            for prefix in ("/api/index.py", "/api/index"):
-                if path == prefix or path.startswith(prefix + "/"):
-                    environ["PATH_INFO"] = path[len(prefix):] or "/"
+            # Clear SCRIPT_NAME to prevent Werkzeug routing confusion
+            environ["SCRIPT_NAME"] = ""
+
+            # Strip serverless function prefixes if present
+            for prefix in ("/api/index.py", "/api/index", "/api"):
+                if path == prefix:
+                    path = "/"
+                    break
+                elif path.startswith(prefix + "/"):
+                    path = path[len(prefix):]
                     break
 
+            environ["PATH_INFO"] = path or "/"
             return self.wsgi_app(environ, start_response)
 
     app.wsgi_app = VercelPathFix(_orig_wsgi)
