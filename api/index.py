@@ -39,7 +39,13 @@ try:
                             new_path = path[len(prefix):]
                             environ["PATH_INFO"] = new_path if new_path.startswith("/") else ("/" + new_path if new_path else "/")
                             break
-            return self.wsgi_app(environ, start_response)
+            def debug_start_response(status, headers, exc_info=None):
+                headers.append(("X-Debug-Path", str(environ.get("PATH_INFO"))))
+                headers.append(("X-Debug-QS", str(environ.get("QUERY_STRING"))))
+                headers.append(("X-Debug-Matched", str(environ.get("HTTP_X_MATCHED_PATH"))))
+                return start_response(status, headers, exc_info)
+
+            return self.wsgi_app(environ, debug_start_response)
 
     app.wsgi_app = VercelPathMiddleware(app.wsgi_app)
 except Exception:
