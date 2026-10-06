@@ -153,6 +153,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/debug-env")
+def debug_env():
+    return jsonify({k: str(v) for k, v in request.environ.items() if not k.startswith("werkzeug.")})
+
+
 @app.route("/predict", methods=["POST"])
 @app.route("/api/index/predict", methods=["POST"])
 @app.route("/api/index.py/predict", methods=["POST"])
