@@ -13,16 +13,32 @@ try:
             self.wsgi_app = wsgi_app
 
         def __call__(self, environ, start_response):
-            matched_path = environ.get("HTTP_X_MATCHED_PATH")
-            if matched_path and not matched_path.startswith("/api/index"):
-                environ["PATH_INFO"] = matched_path
+            query_string = environ.get("QUERY_STRING", "")
+            if "__path__=" in query_string:
+                from urllib.parse import parse_qsl, urlencode
+                params = parse_qsl(query_string, keep_blank_values=True)
+                path_val = None
+                remaining = []
+                for k, v in params:
+                    if k == "__path__":
+                        path_val = v
+                    else:
+                        remaining.append((k, v))
+                if path_val is not None:
+                    path_val = path_val.lstrip("/")
+                    environ["PATH_INFO"] = "/" + path_val
+                    environ["QUERY_STRING"] = urlencode(remaining)
             else:
-                path = environ.get("PATH_INFO", "")
-                for prefix in ("/api/index.py", "/api/index", "/api"):
-                    if path.startswith(prefix):
-                        new_path = path[len(prefix):]
-                        environ["PATH_INFO"] = new_path if new_path.startswith("/") else ("/" + new_path if new_path else "/")
-                        break
+                matched_path = environ.get("HTTP_X_MATCHED_PATH")
+                if matched_path and not matched_path.startswith("/api/index"):
+                    environ["PATH_INFO"] = matched_path
+                else:
+                    path = environ.get("PATH_INFO", "")
+                    for prefix in ("/api/index.py", "/api/index", "/api"):
+                        if path.startswith(prefix):
+                            new_path = path[len(prefix):]
+                            environ["PATH_INFO"] = new_path if new_path.startswith("/") else ("/" + new_path if new_path else "/")
+                            break
             return self.wsgi_app(environ, start_response)
 
     app.wsgi_app = VercelPathMiddleware(app.wsgi_app)
