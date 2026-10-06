@@ -1,0 +1,8 @@
+venv/
+data/raw/
+data/processed/cleaned.csv
+data/processed/splits.joblib
+notebooks/
+tests/
+__pycache__/
+.git/
