@@ -15,7 +15,10 @@ import traceback
 import numpy as np
 import pandas as pd
 import joblib
-import shap
+try:
+    import shap
+except ImportError:
+    shap = None
 from pathlib import Path
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
@@ -67,7 +70,7 @@ try:
 
     # SHAP explainer
     model_type = type(regressor).__name__
-    if model_type in ("RandomForestRegressor", "XGBRegressor"):
+    if shap is not None and model_type in ("RandomForestRegressor", "XGBRegressor"):
         shap_explainer = shap.TreeExplainer(regressor)
     else:
         # Will create KernelExplainer on demand
